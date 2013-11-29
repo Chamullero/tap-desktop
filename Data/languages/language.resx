@@ -4527,4 +4527,13 @@ Good luck.</value>
   <data name="MessageBox_3005_name" xml:space="preserve">
     <value>Airport restrictions</value>
   </data>
+  <data name="PageHumanRoutes_1004_name" xml:space="preserve">
+    <value>Filling Degree</value>
+  </data>
+  <data name="PageHumanRoutes_1005_name" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="PageHumanRoutes_1006_name" xml:space="preserve">
+    <value>Average</value>
+  </data>
 </root>
