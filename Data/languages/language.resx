@@ -1779,7 +1779,7 @@ Loading of game aborted.</value>
     <value>Upgrade Facility</value>
   </data>
   <data name="MessageBox_2202_message" xml:space="preserve">
-    <value>Are you sure you want to upgrade the facilities to {0} for {1:c}?</value>
+    <value>Are you sure you want to upgrade the facilities to {0} for {1}?</value>
   </data>
   <data name="MessageBox_2203_name" xml:space="preserve">
     <value>Error</value>
@@ -3046,7 +3046,7 @@ Good luck.</value>
     <value>Distance error</value>
   </data>
   <data name="MessageBox_3002_message" xml:space="preserve">
-    <value>One or more airports are not of appropriate type (Regional/Domestic/Intl) or are missing some facilities</value>
+    <value>One or more airports are not of appropriate type (Regional/Domestic/Intl) </value>
   </data>
   <data name="MessageBox_3002_name" xml:space="preserve">
     <value>Airport error</value>
@@ -4508,5 +4508,23 @@ Good luck.</value>
   </data>
   <data name="PageAirlineEmployees_1012_name" xml:space="preserve">
     <value>Pilots due to Retire</value>
+  </data>
+  <data name="MessageBox_2229_message" xml:space="preserve">
+    <value>Are you sure you want to upgrade the facilities to {0} for {1}?</value>
+  </data>
+  <data name="MessageBox_2229_name" xml:space="preserve">
+    <value>Buy facility</value>
+  </data>
+  <data name="MessageBox_3003_message" xml:space="preserve">
+    <value>One or more airports are missing cargo facilities</value>
+  </data>
+  <data name="MessageBox_3003_name" xml:space="preserve">
+    <value>Cargo error</value>
+  </data>
+  <data name="MessageBox_3005_message" xml:space="preserve">
+    <value>There are flight restrictions between the airports</value>
+  </data>
+  <data name="MessageBox_3005_name" xml:space="preserve">
+    <value>Airport restrictions</value>
   </data>
 </root>

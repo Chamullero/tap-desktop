@@ -141,7 +141,7 @@ namespace TheAirline.GUIModel.PagesModel.RoutesPageModel
             Airport destination2 = (Airport)cbDestination2.SelectedItem;
             Airport stopover1 = (Airport)cbStopover1.SelectedItem;
             Airport stopover2 = cbStopover2.Visibility == System.Windows.Visibility.Visible ? (Airport)cbStopover2.SelectedItem : null;
-
+    
             try
             {
                 if (AirlineHelpers.IsRouteDestinationsOk(GameObject.GetInstance().HumanAirline, destination1, destination2, rbPassenger.IsChecked.Value ? Route.RouteType.Passenger : Route.RouteType.Cargo, stopover1, stopover2))

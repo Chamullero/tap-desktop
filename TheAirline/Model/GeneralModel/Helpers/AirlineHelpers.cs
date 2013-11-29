@@ -54,7 +54,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
             if (airline.IsHuman && GameObject.GetInstance().HumanAirline == airline)
             {
                 GameObject.GetInstance().addHumanMoney(amount);
-                GameObject.GetInstance().HumanAirline.addInvoice(new Invoice(date, type, amount),false);
+                GameObject.GetInstance().HumanAirline.addInvoice(new Invoice(date, type, amount), false);
             }
             else
                 airline.addInvoice(new Invoice(date, type, amount));
@@ -88,7 +88,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
 
             return fAirliner;
         }
-       
+
         //orders a number of airliners for an airline
         public static void OrderAirliners(Airline airline, List<AirlinerOrder> orders, Airport airport, DateTime deliveryDate)
         {
@@ -159,7 +159,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
                     Gate newGate = newAirport.Terminals.getGates().Where(g => g.Airline == null).First();
                     newGate.Airline = airline;
 
-                    Gate oldGate =oldAirport.Terminals.getGates().Where(g => g.Airline == airline).First();
+                    Gate oldGate = oldAirport.Terminals.getGates().Where(g => g.Airline == airline).First();
                     oldGate.Airline = null;
                 }
 
@@ -202,7 +202,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
                 oldAirport.addAirportFacility(airline, noneFacility, GameObject.GetInstance().GameTime);
             }
         }
-       
+
         //returns all route facilities for a given airline and type
         public static List<RouteFacility> GetRouteFacilities(Airline airline, RouteFacility.FacilityType type)
         {
@@ -301,7 +301,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
             airportHomeBase.addAirportFacility(sAirline, checkinFacility, GameObject.GetInstance().GameTime);
 
             if (!AirportHelpers.HasFreeGates(airportHomeBase, sAirline))
-                AirportHelpers.RentGates(airportHomeBase, sAirline,2);
+                AirportHelpers.RentGates(airportHomeBase, sAirline, 2);
 
             Airlines.AddAirline(sAirline);
 
@@ -431,7 +431,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
         public static Boolean CanApplyForLoan(Airline airline, Loan loan)
         {
             double loans = airline.Loans.Sum(l => l.Amount);
-           
+
             return loan.Amount + loans < GetMaxLoanAmount(airline);
         }
         //returns if an airline has licens for flying between two airports
@@ -550,68 +550,91 @@ namespace TheAirline.Model.GeneralModel.Helpers
                 }
             }
         }
+        private enum RouteOkStatus { Ok, Missing_Cargo, Wrong_Distance, Appropriate_Type, Restrictions };
         //returns if a route can be created
         public static Boolean IsRouteDestinationsOk(Airline airline, Airport destination1, Airport destination2, Route.RouteType routeType, Airport stopover1 = null, Airport stopover2 = null)
         {
-          var distances = new List<double>();  
-             Boolean stopoverOk = (stopover1 == null ? true : AirportHelpers.HasFreeGates(stopover1, airline)) && (stopover2 == null ? true : AirportHelpers.HasFreeGates(stopover2, airline));
+            var distances = new List<double>();
+         
+            Boolean stopoverOk = (stopover1 == null || routeType == Route.RouteType.Cargo ? true : AirportHelpers.HasFreeGates(stopover1, airline)) && (stopover2 == null || routeType == Route.RouteType.Cargo ? true : AirportHelpers.HasFreeGates(stopover2, airline));
+          
+            if ((AirportHelpers.HasFreeGates(destination1, airline) && AirportHelpers.HasFreeGates(destination2, airline) && stopoverOk) || routeType == Route.RouteType.Cargo)
+            {
+                RouteOkStatus routeOkStatus = RouteOkStatus.Ok;
 
-             if (AirportHelpers.HasFreeGates(destination1, airline) && AirportHelpers.HasFreeGates(destination2, airline) && stopoverOk)
-             {
-                 Boolean isRouteOk = false;
+                if (stopover1 == null && stopover2 == null)
+                {
+                    distances.Add(MathHelpers.GetDistance(destination1, destination2));
+                    routeOkStatus = GetRouteStatus(destination1, destination2, routeType);
+                }
 
-                 if (stopover1 == null && stopover2 == null)
-                 {
-                     distances.Add(MathHelpers.GetDistance(destination1, destination2));
-                     isRouteOk = CheckRouteOk(destination1, destination2, routeType);
-                 }
+                if (stopover1 == null && stopover2 != null)
+                {
+                    distances.Add(MathHelpers.GetDistance(destination1, stopover2));
+                    distances.Add(MathHelpers.GetDistance(stopover2, destination2));
+                    routeOkStatus = GetRouteStatus(destination1, stopover2, routeType);
 
-                 if (stopover1 == null && stopover2 != null)
-                 {
-                     distances.Add(MathHelpers.GetDistance(destination1, stopover2));
-                     distances.Add(MathHelpers.GetDistance(stopover2, destination2));
-                     isRouteOk = CheckRouteOk(destination1, stopover2, routeType) && CheckRouteOk(stopover2, destination2, routeType);
+                    if (routeOkStatus == RouteOkStatus.Ok)
+                        routeOkStatus = GetRouteStatus(stopover2, destination2, routeType);
 
-                 }
+                }
 
-                 if (stopover1 != null && stopover2 == null)
-                 {
-                     distances.Add(MathHelpers.GetDistance(destination1, stopover1));
-                     distances.Add(MathHelpers.GetDistance(stopover1, destination2));
-                     isRouteOk = CheckRouteOk(destination1, stopover1, routeType) && CheckRouteOk(stopover1, destination2, routeType);
-                 }
+                if (stopover1 != null && stopover2 == null)
+                {
+                    distances.Add(MathHelpers.GetDistance(destination1, stopover1));
+                    distances.Add(MathHelpers.GetDistance(stopover1, destination2));
+                    routeOkStatus = GetRouteStatus(destination1, stopover1, routeType);
 
-                 if (stopover1 != null && stopover2 != null)
-                 {
-                     distances.Add(MathHelpers.GetDistance(destination1, stopover1));
-                     distances.Add(MathHelpers.GetDistance(stopover1, stopover2));
-                     distances.Add(MathHelpers.GetDistance(stopover2, destination2));
-                     isRouteOk = CheckRouteOk(destination1, stopover1, routeType) && CheckRouteOk(stopover1, stopover2, routeType) && CheckRouteOk(stopover2, destination2, routeType);
-                 }
+                    if (routeOkStatus == RouteOkStatus.Ok)
+                        routeOkStatus = GetRouteStatus(stopover1, destination2, routeType);
+                }
 
-                 double maxDistance = distances.Max();
-                 double minDistance = distances.Min();
+                if (stopover1 != null && stopover2 != null)
+                {
+                    distances.Add(MathHelpers.GetDistance(destination1, stopover1));
+                    distances.Add(MathHelpers.GetDistance(stopover1, stopover2));
+                    distances.Add(MathHelpers.GetDistance(stopover2, destination2));
+                    routeOkStatus = GetRouteStatus(destination1, stopover1, routeType);
 
-                 var query = from a in AirlinerTypes.GetTypes(delegate(AirlinerType t) { return t.Produced.From < GameObject.GetInstance().GameTime; })
-                             select a.Range;
+                    if (routeOkStatus == RouteOkStatus.Ok)
+                        routeOkStatus = GetRouteStatus(stopover1, stopover2, routeType);
 
-                 double maxFlightDistance = query.Max();
+                    if (routeOkStatus == RouteOkStatus.Ok)
+                        routeOkStatus = GetRouteStatus(stopover2, destination2, routeType);
+                }
 
-                 if (minDistance > 50 && maxDistance < maxFlightDistance && isRouteOk)
-                     return true;
-                 else
-                 {
-                     if (!isRouteOk)
-                         throw new Exception("3002");
-                     else
+                double maxDistance = distances.Max();
+                double minDistance = distances.Min();
+
+                var query = from a in AirlinerTypes.GetTypes(delegate(AirlinerType t) { return t.Produced.From < GameObject.GetInstance().GameTime; })
+                            select a.Range;
+
+                double maxFlightDistance = query.Max();
+
+                if (minDistance <= 50 || maxDistance > maxFlightDistance)
+                    routeOkStatus = RouteOkStatus.Wrong_Distance;
+
+                if (routeOkStatus == RouteOkStatus.Ok)
+                    return true;
+                else
+                {
+                    
+                    if (routeOkStatus == RouteOkStatus.Appropriate_Type)
+                        throw new Exception("3002");
+                    else if (routeOkStatus == RouteOkStatus.Wrong_Distance)
                         throw new Exception("3001");
-                 }
+                    else if (routeOkStatus == RouteOkStatus.Missing_Cargo)
+                        throw new Exception("3003");
+                    else if (routeOkStatus == RouteOkStatus.Restrictions)
+                        throw new Exception("3004");
 
+                    throw new Exception("3000");
 
-             }
-             else
-                 throw new Exception("3000");
-                 
+                }
+         }
+            else
+                throw new Exception("3000");
+
         }
         //returns if two airports can have route between them and if the airline has license for the route
         private static Boolean CheckRouteOk(Airport airport1, Airport airport2, Route.RouteType routeType)
@@ -619,10 +642,31 @@ namespace TheAirline.Model.GeneralModel.Helpers
             Boolean isCargoRouteOk = true;
             if (routeType == Route.RouteType.Cargo)
                 isCargoRouteOk = AIHelpers.IsCargoRouteDestinationsCorrect(airport1, airport2, GameObject.GetInstance().HumanAirline);
-       
+
             return isCargoRouteOk && AirlineHelpers.HasAirlineLicens(GameObject.GetInstance().HumanAirline, airport1, airport2) && AIHelpers.IsRouteInCorrectArea(airport1, airport2) && !FlightRestrictions.HasRestriction(airport1.Profile.Country, airport2.Profile.Country, GameObject.GetInstance().GameTime, FlightRestriction.RestrictionType.Flights) && !FlightRestrictions.HasRestriction(airport2.Profile.Country, airport1.Profile.Country, GameObject.GetInstance().GameTime, FlightRestriction.RestrictionType.Flights) && !FlightRestrictions.HasRestriction(GameObject.GetInstance().HumanAirline, airport1.Profile.Country, airport2.Profile.Country, GameObject.GetInstance().GameTime);
         }
+        private static RouteOkStatus GetRouteStatus(Airport airport1, Airport airport2, Route.RouteType routeType)
+        {
+            RouteOkStatus status = RouteOkStatus.Ok;
 
+            if (routeType == Route.RouteType.Cargo)
+                if (!AIHelpers.IsCargoRouteDestinationsCorrect(airport1, airport2, GameObject.GetInstance().HumanAirline))
+                    status = RouteOkStatus.Missing_Cargo;
+
+            if (status == RouteOkStatus.Ok)
+            {
+                if (AirlineHelpers.HasAirlineLicens(GameObject.GetInstance().HumanAirline, airport1, airport2) && AIHelpers.IsRouteInCorrectArea(airport1, airport2))
+                    if (!FlightRestrictions.HasRestriction(airport1.Profile.Country, airport2.Profile.Country, GameObject.GetInstance().GameTime, FlightRestriction.RestrictionType.Flights) && !FlightRestrictions.HasRestriction(airport2.Profile.Country, airport1.Profile.Country, GameObject.GetInstance().GameTime, FlightRestriction.RestrictionType.Flights) && !FlightRestrictions.HasRestriction(GameObject.GetInstance().HumanAirline, airport1.Profile.Country, airport2.Profile.Country, GameObject.GetInstance().GameTime))
+                        status = RouteOkStatus.Ok;
+                    else
+                        status = RouteOkStatus.Restrictions;
+                else
+                    status = RouteOkStatus.Appropriate_Type;
+            }
+
+            return status;
+
+        }
     }
     //airline insurance helpers
     public class AirlineInsuranceHelpers
