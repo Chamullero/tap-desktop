@@ -34,6 +34,7 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
         public PageUsedAirliners()
         {
             this.Loaded += PageUsedAirliners_Loaded;
+            this.Unloaded += PageUsedAirliners_Unloaded;
 
             this.AllAirliners = new ObservableCollection<Airliner>();
             foreach (Airliner airliner in Airliners.GetAirlinersForSale().OrderByDescending(a => a.BuiltDate.Year).ToList())
@@ -45,6 +46,15 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
 
 
 
+        }
+
+        private void PageUsedAirliners_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var filters = this.lvAirliners.getCurrentFilters();
+
+            PageAirliners parent = (PageAirliners)this.Tag;
+
+            parent.AirlinersFilters = filters;
         }
 
         private void PageUsedAirliners_Loaded(object sender, RoutedEventArgs e)
@@ -67,6 +77,11 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
 
                 matchingItem.Visibility = System.Windows.Visibility.Collapsed;
             }
+
+            var filters = ((PageAirliners)this.Tag).AirlinersFilters;
+
+            if (filters != null)
+                this.lvAirliners.setCurrentFilters(filters);
 
         }
 

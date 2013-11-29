@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,8 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
     {
         public List<AirlineFleetSizeMVVM> MostUsedAircrafts { get; set; }
         public List<AirlinerType> NewestAircrafts { get; set; }
+        public Hashtable AirlinersFilters { get; set; }
+   
         public PageAirliners()
         {
             this.NewestAircrafts = AirlinerTypes.GetTypes(a => a.Produced.From <= GameObject.GetInstance().GameTime).OrderByDescending(a => a.Produced.From).Take(5).ToList();
