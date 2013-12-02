@@ -4444,7 +4444,7 @@ Good luck.</value>
     <value>Fire pilot</value>
   </data>
   <data name="MessageBox_2126_message" xml:space="preserve">
-    <value>Are you sure you want to but this airliner for {0}?</value>
+    <value>Are you sure you want to buy this airliner for {0}?</value>
   </data>
   <data name="MessageBox_2126_name" xml:space="preserve">
     <value>Buy airliner</value>

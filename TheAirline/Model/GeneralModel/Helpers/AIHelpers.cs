@@ -685,7 +685,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
 
                             }
 
-                            NewsFeeds.AddNewsFeed(new NewsFeed(GameObject.GetInstance().GameTime, string.Format(Translator.GetInstance().GetString("NewsFeed", "1001"), airline.Profile.Name, new AirportCodeConverter().Convert(route.Destination1), new AirportCodeConverter().Convert(route.Destination2))));
+                            //NewsFeeds.AddNewsFeed(new NewsFeed(GameObject.GetInstance().GameTime, string.Format(Translator.GetInstance().GetString("NewsFeed", "1001"), airline.Profile.Name, new AirportCodeConverter().Convert(route.Destination1), new AirportCodeConverter().Convert(route.Destination2))));
 
                           
                             if (route.Type == Route.RouteType.Passenger || route.Type == Route.RouteType.Mixed)

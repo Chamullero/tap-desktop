@@ -72,9 +72,6 @@ namespace TheAirline.GUIModel.PagesModel.AirportsPageModel
             foreach (AirlinerType type in GameObject.GetInstance().HumanAirline.Fleet.Select(f => f.Airliner.Type).Distinct())
                 this.HumanAircrafts.Add(type);
 
-            this.Unloaded += PageShowAirports_Unloaded;
-            this.Loaded += PageShowAirports_Loaded;
-
             InitializeComponent();
 
          
@@ -94,23 +91,7 @@ namespace TheAirline.GUIModel.PagesModel.AirportsPageModel
            
         }
 
-        private void PageShowAirports_Loaded(object sender, RoutedEventArgs e)
-        {
-            var filters = ((PageAirports)this.Tag).AirportsFilters;
-
-            if (filters != null)
-                this.AirportsList.setCurrentFilters(filters);
-        }
-
-        private void PageShowAirports_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var filters = this.AirportsList.getCurrentFilters();
-
-            PageAirports parent = (PageAirports)this.Tag;
-
-            parent.AirportsFilters = filters;
-        }
-
+      
        
         private void clName_Click(object sender, RoutedEventArgs e)
         {

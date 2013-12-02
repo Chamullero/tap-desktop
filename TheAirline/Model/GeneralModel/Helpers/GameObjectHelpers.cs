@@ -25,6 +25,7 @@ using TheAirline.GraphicsModel.PageModel.GeneralModel;
 using TheAirline.GUIModel.ObjectsModel;
 using TheAirline.Model.GeneralModel.CountryModel;
 using TheAirline.GUIModel.PagesModel.GamePageModel;
+using System.Globalization;
 
 namespace TheAirline.Model.GeneralModel.Helpers
 {
@@ -1075,7 +1076,43 @@ namespace TheAirline.Model.GeneralModel.Helpers
             if (GameObject.GetInstance().Scenario != null)
                 ScenarioHelpers.UpdateScenario(GameObject.GetInstance().Scenario);
 
+            CreateMontlySummary();
+        }
+        //creates the monthly summary report for the human airline
+        private static void CreateMontlySummary()
+        {
+            Airline airline = GameObject.GetInstance().HumanAirline;
 
+            string monthName = GameObject.GetInstance().GameTime.AddMonths(-1).ToString("MMMM", CultureInfo.InvariantCulture);
+
+            string summary = "[HEAD=Routes Summary]\n";
+
+            var routes = airline.Routes.OrderByDescending(r=>r.getBalance(GameObject.GetInstance().GameTime.AddMonths(-1), GameObject.GetInstance().GameTime));
+            var homeAirport = airline.Airports[0];
+
+            foreach (Route route in routes)
+            {
+                var monthBalance = route.getBalance(GameObject.GetInstance().GameTime.AddMonths(-1), GameObject.GetInstance().GameTime);
+                summary += string.Format("[WIDTH=300 {0}-{1}]Balance in month: {2}\n", route.Destination1.Profile.Name, route.Destination2.Profile.Name, new ValueCurrencyConverter().Convert(monthBalance));
+                
+            }
+
+            summary += "\n\n";
+
+            summary += "[HEAD=Destinations Advice]\n";
+
+            Airport largestDestination;
+
+            if (airline.AirlineRouteFocus == Route.RouteType.Cargo)
+                largestDestination = homeAirport.getDestinationDemands().Where(a => a!=null && GeneralHelpers.IsAirportActive(a) && !airline.Routes.Exists(r=>(r.Destination1 == homeAirport && r.Destination2==a) || (r.Destination2 == homeAirport && r.Destination1 == a))).OrderByDescending(a => homeAirport.getDestinationCargoRate(a)).FirstOrDefault();
+            else
+                largestDestination = homeAirport.getDestinationDemands().Where(a => a!=null && GeneralHelpers.IsAirportActive(a) && !airline.Routes.Exists(r=>(r.Destination1 == homeAirport && r.Destination2==a) || (r.Destination2 == homeAirport && r.Destination1 == a))).OrderByDescending(a => homeAirport.getDestinationPassengersRate(a, AirlinerClass.ClassType.Economy_Class)).FirstOrDefault();
+            
+            if (largestDestination != null)
+                summary += string.Format("The largest destination from [LI airport={0}] where you don't have a route, is [LI airport={1}]", homeAirport.Profile.IATACode, largestDestination.Profile.IATACode);
+            s
+            GameObject.GetInstance().NewsBox.addNews(new News(News.NewsType.Airline_News, GameObject.GetInstance().GameTime,string.Format("{0} {1} Summary",monthName,GameObject.GetInstance().GameTime.AddMonths(-1).Year),summary));// Translator.GetInstance().GetString("News", "1003"), string.Format(Translator.GetInstance().GetString("News", "1003", "message"), airliner.Airliner.TailNumber, airport.Profile.IATACode)));
+                        
         }
         //updates an airliner
         private static void UpdateAirliner(FleetAirliner airliner)
