@@ -2142,15 +2142,26 @@ namespace TheAirline.Model.GeneralModel
 
 		/*! sets up the game.
 		 */
-		public static void SetupMainGame(List<Airline> opponents)
+		public static void SetupMainGame(List<Airline> opponents, int totalOpponents)
 		{
-			List<Airline> airlines = new List<Airline>(Airlines.GetAllAirlines());
+		    int year = GameObject.GetInstance().GameTime.Year;
+      
+            var notAvailableAirlines = Airlines.GetAirlines(a => !(a.Profile.Founded <= year && a.Profile.Folded > year));
 
-			foreach (Airline airline in airlines)
-				if (!opponents.Contains(airline) && !airline.IsHuman)
-					Airlines.RemoveAirline(airline);
+            foreach (Airline airline in notAvailableAirlines)
+                Airlines.RemoveAirline(airline);
 
-			SetupMainGame();
+         
+            List<Airline> airlines = new List<Airline>(Airlines.GetAirlines(a => !a.IsHuman && !opponents.Contains(a) && a.Profile.Founded <= year && a.Profile.Folded > year));
+            
+            airlines = MathHelpers.Shuffle(airlines);
+
+            for (int i = 0; i < airlines.Count + opponents.Count - totalOpponents; i++)
+            {
+                Airlines.RemoveAirline(airlines[i]);
+            }
+
+            SetupMainGame();
 		}
 		public static void SetupMainGame(int opponents, Boolean sameRegion)
 		{
@@ -2444,102 +2455,108 @@ namespace TheAirline.Model.GeneralModel
 				Airport dest1 = Airports.GetAirport(startRoute.Destination1);
 				Airport dest2 = Airports.GetAirport(startRoute.Destination2);
 
-				if (dest1.getAirportFacility(airline, AirportFacility.FacilityType.CheckIn).TypeLevel == 0)
-					dest1.addAirportFacility(airline, checkinFacility, GameObject.GetInstance().GameTime);
+                if (dest1 != null && dest2 != null)
+                {
+                    if (dest1.getAirportFacility(airline, AirportFacility.FacilityType.CheckIn).TypeLevel == 0)
+                        dest1.addAirportFacility(airline, checkinFacility, GameObject.GetInstance().GameTime);
 
-				if (dest2.getAirportFacility(airline, AirportFacility.FacilityType.CheckIn).TypeLevel == 0)
-					dest2.addAirportFacility(airline, checkinFacility, GameObject.GetInstance().GameTime);
+                    if (dest2.getAirportFacility(airline, AirportFacility.FacilityType.CheckIn).TypeLevel == 0)
+                        dest2.addAirportFacility(airline, checkinFacility, GameObject.GetInstance().GameTime);
 
-				if (dest1.getAirportFacility(airline, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && dest1.getAirportFacility(null, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && airline.AirlineRouteFocus == Route.RouteType.Cargo)
-					dest1.addAirportFacility(airline, cargoTerminal, GameObject.GetInstance().GameTime);
+                    if (dest1.getAirportFacility(airline, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && dest1.getAirportFacility(null, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && airline.AirlineRouteFocus == Route.RouteType.Cargo)
+                        dest1.addAirportFacility(airline, cargoTerminal, GameObject.GetInstance().GameTime);
 
-				if (dest2.getAirportFacility(airline, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && dest2.getAirportFacility(null, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && airline.AirlineRouteFocus == Route.RouteType.Cargo)
-					dest2.addAirportFacility(airline, cargoTerminal, GameObject.GetInstance().GameTime);
-
-
-				if (!AirportHelpers.HasFreeGates(dest1, airline))
-					AirportHelpers.RentGates(dest1, airline);
-				
-				if (!AirportHelpers.HasFreeGates(dest2, airline))
-					AirportHelpers.RentGates(dest2,airline);
-
-				Guid id = Guid.NewGuid();
-
-				Route route = null;
-
-				double price = PassengerHelpers.GetPassengerPrice(dest1, dest2);
-
-				if (startRoute.RouteType == Route.RouteType.Mixed || startRoute.RouteType == Route.RouteType.Passenger)
-				{
-					route = new PassengerRoute(id.ToString(), dest1, dest2, price);
-				}
-
-				if (startRoute.RouteType == Route.RouteType.Cargo)
-					route = new CargoRoute(id.ToString(), dest1, dest2, PassengerHelpers.GetCargoPrice(dest1, dest2));
-
-				KeyValuePair<Airliner, Boolean>? airliner = null;
-				if (startRoute.Type != null)
-				{
-					double distance = MathHelpers.GetDistance(dest1, dest2);
-
-					if (startRoute.Type.Range > distance)
-					{
-						airliner = new KeyValuePair<Airliner, bool>(Airliners.GetAirlinersForSale(a => a.Type == startRoute.Type).FirstOrDefault(), true);
-
-						if (airliner.Value.Key == null)
-						{
-							id = Guid.NewGuid();
-							Airliner nAirliner = new Airliner(id.ToString(), startRoute.Type, airline.Profile.Country.TailNumbers.getNextTailNumber(), GameObject.GetInstance().GameTime);
-							Airliners.AddAirliner(nAirliner);
-
-							nAirliner.clearAirlinerClasses();
-
-							AirlinerHelpers.CreateAirlinerClasses(nAirliner);
-
-							airliner = new KeyValuePair<Airliner, bool>(nAirliner, true);
-						}
-					}
-
-				}
-
-				if (airliner == null)
-				{
-					airliner = AIHelpers.GetAirlinerForRoute(airline, dest2, dest1, false, startRoute.RouteType == Route.RouteType.Cargo, true);
-
-					if (airliner == null)
-						airliner = AIHelpers.GetAirlinerForRoute(airline, dest2, dest1, true, startRoute.RouteType == Route.RouteType.Cargo, true);
-
-				}
-
-				FleetAirliner fAirliner = AirlineHelpers.AddAirliner(airline, airliner.Value.Key, airline.Airports[0]);
-				fAirliner.addRoute(route);
-				fAirliner.Status = FleetAirliner.AirlinerStatus.To_route_start;
-				AirlineHelpers.HireAirlinerPilots(fAirliner);
-
-				route.LastUpdated = GameObject.GetInstance().GameTime;
-
-				if (startRoute.RouteType == Route.RouteType.Mixed || startRoute.RouteType == Route.RouteType.Passenger)
-				{
-					AirlinerHelpers.CreateAirlinerClasses(fAirliner.Airliner);
+                    if (dest2.getAirportFacility(airline, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && dest2.getAirportFacility(null, AirportFacility.FacilityType.Cargo).TypeLevel == 0 && airline.AirlineRouteFocus == Route.RouteType.Cargo)
+                        dest2.addAirportFacility(airline, cargoTerminal, GameObject.GetInstance().GameTime);
 
 
-					RouteClassesConfiguration configuration = AIHelpers.GetRouteConfiguration((PassengerRoute)route);
+                    if (!AirportHelpers.HasFreeGates(dest1, airline))
+                        AirportHelpers.RentGates(dest1, airline);
 
-					foreach (RouteClassConfiguration classConfiguration in configuration.getClasses())
-					{
-						((PassengerRoute)route).getRouteAirlinerClass(classConfiguration.Type).FarePrice = price * GeneralHelpers.ClassToPriceFactor(classConfiguration.Type);
+                    if (!AirportHelpers.HasFreeGates(dest2, airline))
+                        AirportHelpers.RentGates(dest2, airline);
 
-						foreach (RouteFacility rFacility in classConfiguration.getFacilities())
-							((PassengerRoute)route).getRouteAirlinerClass(classConfiguration.Type).addFacility(rFacility);
-					}
+                    Guid id = Guid.NewGuid();
 
-					AIHelpers.CreateRouteTimeTable(route, fAirliner);
-				}
-				if (startRoute.RouteType == Route.RouteType.Cargo)
-				{
-					AIHelpers.CreateCargoRouteTimeTable(route, fAirliner);
-				}
-				airline.addRoute(route);
+                    Route route = null;
+
+                    double price = PassengerHelpers.GetPassengerPrice(dest1, dest2);
+
+                    if (startRoute.RouteType == Route.RouteType.Mixed || startRoute.RouteType == Route.RouteType.Passenger)
+                    {
+                        route = new PassengerRoute(id.ToString(), dest1, dest2, price);
+                    }
+
+                    if (startRoute.RouteType == Route.RouteType.Cargo)
+                        route = new CargoRoute(id.ToString(), dest1, dest2, PassengerHelpers.GetCargoPrice(dest1, dest2));
+
+                    KeyValuePair<Airliner, Boolean>? airliner = null;
+                    if (startRoute.Type != null)
+                    {
+                        double distance = MathHelpers.GetDistance(dest1, dest2);
+
+                        if (startRoute.Type.Range > distance)
+                        {
+                            airliner = new KeyValuePair<Airliner, bool>(Airliners.GetAirlinersForSale(a => a.Type == startRoute.Type).FirstOrDefault(), true);
+
+                            if (airliner.Value.Key == null)
+                            {
+                                id = Guid.NewGuid();
+                                Airliner nAirliner = new Airliner(id.ToString(), startRoute.Type, airline.Profile.Country.TailNumbers.getNextTailNumber(), GameObject.GetInstance().GameTime);
+                                Airliners.AddAirliner(nAirliner);
+
+                                nAirliner.clearAirlinerClasses();
+
+                                AirlinerHelpers.CreateAirlinerClasses(nAirliner);
+
+                                airliner = new KeyValuePair<Airliner, bool>(nAirliner, true);
+                            }
+                        }
+
+                    }
+
+                    if (airliner == null)
+                    {
+                        airliner = AIHelpers.GetAirlinerForRoute(airline, dest2, dest1, false, startRoute.RouteType == Route.RouteType.Cargo, true);
+
+                        if (airliner == null)
+                            airliner = AIHelpers.GetAirlinerForRoute(airline, dest2, dest1, true, startRoute.RouteType == Route.RouteType.Cargo, true);
+
+                    }
+
+                    if (airliner != null)
+                    {
+                        FleetAirliner fAirliner = AirlineHelpers.AddAirliner(airline, airliner.Value.Key, airline.Airports[0]);
+                        fAirliner.addRoute(route);
+                        fAirliner.Status = FleetAirliner.AirlinerStatus.To_route_start;
+                        AirlineHelpers.HireAirlinerPilots(fAirliner);
+
+                        route.LastUpdated = GameObject.GetInstance().GameTime;
+
+                        if (startRoute.RouteType == Route.RouteType.Mixed || startRoute.RouteType == Route.RouteType.Passenger)
+                        {
+                            AirlinerHelpers.CreateAirlinerClasses(fAirliner.Airliner);
+
+
+                            RouteClassesConfiguration configuration = AIHelpers.GetRouteConfiguration((PassengerRoute)route);
+
+                            foreach (RouteClassConfiguration classConfiguration in configuration.getClasses())
+                            {
+                                ((PassengerRoute)route).getRouteAirlinerClass(classConfiguration.Type).FarePrice = price * GeneralHelpers.ClassToPriceFactor(classConfiguration.Type);
+
+                                foreach (RouteFacility rFacility in classConfiguration.getFacilities())
+                                    ((PassengerRoute)route).getRouteAirlinerClass(classConfiguration.Type).addFacility(rFacility);
+                            }
+
+                            AIHelpers.CreateRouteTimeTable(route, fAirliner);
+                        }
+                        if (startRoute.RouteType == Route.RouteType.Cargo)
+                        {
+                            AIHelpers.CreateCargoRouteTimeTable(route, fAirliner);
+                        }
+                    }
+                    airline.addRoute(route);
+                }
 
 			});
 

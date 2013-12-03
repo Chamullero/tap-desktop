@@ -1109,8 +1109,8 @@ namespace TheAirline.Model.GeneralModel.Helpers
                 largestDestination = homeAirport.getDestinationDemands().Where(a => a!=null && GeneralHelpers.IsAirportActive(a) && !airline.Routes.Exists(r=>(r.Destination1 == homeAirport && r.Destination2==a) || (r.Destination2 == homeAirport && r.Destination1 == a))).OrderByDescending(a => homeAirport.getDestinationPassengersRate(a, AirlinerClass.ClassType.Economy_Class)).FirstOrDefault();
             
             if (largestDestination != null)
-                summary += string.Format("The largest destination from [LI airport={0}] where you don't have a route, is [LI airport={1}]", homeAirport.Profile.IATACode, largestDestination.Profile.IATACode);
-            s
+                summary += string.Format("The largest destination in terms of demand from [LI airport={0}] where you don't have a route, is [LI airport={1}]", homeAirport.Profile.IATACode, largestDestination.Profile.IATACode);
+            
             GameObject.GetInstance().NewsBox.addNews(new News(News.NewsType.Airline_News, GameObject.GetInstance().GameTime,string.Format("{0} {1} Summary",monthName,GameObject.GetInstance().GameTime.AddMonths(-1).Year),summary));// Translator.GetInstance().GetString("News", "1003"), string.Format(Translator.GetInstance().GetString("News", "1003", "message"), airliner.Airliner.TailNumber, airport.Profile.IATACode)));
                         
         }
@@ -1740,7 +1740,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
             if (startData.RandomOpponents || startData.Opponents == null)
                 Setup.SetupMainGame(opponents, startData.SameRegion);
             else
-                Setup.SetupMainGame(startData.Opponents);
+                Setup.SetupMainGame(startData.Opponents,startData.NumberOfOpponents);
 
 
             airline.MarketFocus = startData.Focus;

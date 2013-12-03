@@ -276,8 +276,11 @@ namespace TheAirline.Model.AirlineModel
         //adds an airport to the airline
         public void addAirport(Airport airport)
         {
-            if (airport!=null)
-                this.Airports.Add(airport);
+            lock (this.Airports)
+            {
+                if (airport != null)
+                    this.Airports.Add(airport);
+            }
         }
         //removes an airport from the airline
         public void removeAirport(Airport airport)
