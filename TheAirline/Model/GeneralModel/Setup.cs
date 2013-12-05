@@ -802,7 +802,9 @@ namespace TheAirline.Model.GeneralModel
 
 				Country country = Countries.GetCountry(manufacturer.Attributes["country"].Value);
 
-				Manufacturers.AddManufacturer(new Manufacturer(name, shortname, country));
+                Boolean isReal = manufacturer.HasAttribute("isreal") ? Convert.ToBoolean(manufacturer.Attributes["isreal"].Value) : true;
+
+				Manufacturers.AddManufacturer(new Manufacturer(name, shortname, country, isReal));
 			}
 		}
 		/*!loads the airliner type configuratoins
@@ -1223,6 +1225,7 @@ namespace TheAirline.Model.GeneralModel
 					if (Airports.GetAirport(a => a.Profile.ID == airport.Profile.ID) == null)
 						Airports.AddAirport(airport);
 
+                  
 				}
 			}
 			catch (Exception e)
@@ -1931,6 +1934,8 @@ namespace TheAirline.Model.GeneralModel
 				isReal = Convert.ToBoolean(infoElement.Attributes["real"].Value);
 				founded = Convert.ToInt16(infoElement.Attributes["from"].Value);
 				folded = Convert.ToInt16(infoElement.Attributes["to"].Value);
+
+           
 			}
 
 			Airline.AirlineLicense license = Airline.AirlineLicense.Domestic;

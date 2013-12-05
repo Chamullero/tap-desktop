@@ -127,7 +127,9 @@ namespace TheAirline.GUIModel.PagesModel.GamePageModel
         {
             Frame frmContent = UIHelpers.FindChild<Frame>((Page)this.Tag, "frmContent");
 
-            frmContent.Navigate(new PageAirlineData(new StartDataObject() { MajorAirports = cbMajorAirports.IsChecked.Value, IsPaused = cbPaused.IsChecked.Value,Focus = (Airline.AirlineFocus)cbFocus.SelectedItem, SameRegion = cbSameRegion.IsChecked.Value, RandomOpponents = rbRandomOpponents.IsChecked.Value,  UseDayTurns=rbDayTurns.IsChecked.Value, Difficulty = (DifficultyLevel)cbDifficulty.SelectedItem, NumberOfOpponents = (int)cbOpponents.SelectedItem, Year = (int)cbYear.SelectedItem, Continent = (Continent)cbContinent.SelectedItem, Region = (Region)cbRegion.SelectedItem}) { Tag = this.Tag });
+            Boolean useRealData = cbReal.IsChecked.Value;
+
+            frmContent.Navigate(new PageAirlineData(new StartDataObject() { MajorAirports = cbMajorAirports.IsChecked.Value, IsPaused = cbPaused.IsChecked.Value,Focus = (Airline.AirlineFocus)cbFocus.SelectedItem, SameRegion = cbSameRegion.IsChecked.Value, RandomOpponents = rbRandomOpponents.IsChecked.Value,  UseDayTurns=rbDayTurns.IsChecked.Value, Difficulty = (DifficultyLevel)cbDifficulty.SelectedItem, NumberOfOpponents = (int)cbOpponents.SelectedItem, Year = (int)cbYear.SelectedItem, Continent = (Continent)cbContinent.SelectedItem, Region = (Region)cbRegion.SelectedItem, RealData=useRealData}) { Tag = this.Tag });
         }
         private void btnStartMenu_Click(object sender, RoutedEventArgs e)
         {

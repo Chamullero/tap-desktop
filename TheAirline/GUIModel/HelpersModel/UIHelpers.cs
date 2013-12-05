@@ -628,7 +628,7 @@ namespace TheAirline.GUIModel.HelpersModel
                 brush.Opacity = 0.50;
 
                 backGroundSetter.Value = brush;
-
+                
                 st.Resources.Add(SystemColors.HighlightBrushKey, brush);
                 st.Resources.Add(SystemColors.ControlBrushKey, brush);
 
@@ -689,6 +689,7 @@ namespace TheAirline.GUIModel.HelpersModel
 
             st.Resources.Add(SystemColors.HighlightBrushKey, brush);
             st.Resources.Add(SystemColors.ControlBrushKey, brush);
+            st.Resources.Add(SystemColors.InactiveSelectionHighlightBrushKey, brush);
 
             /*
             if (index % 2 == 0)
@@ -709,8 +710,9 @@ namespace TheAirline.GUIModel.HelpersModel
             }
              * */
             trigger.Setters.Add(backGroundSetter);
-
+         
             st.Triggers.Add(trigger);
+         
             st.Setters.Add(backGroundSetter);
             st.Setters.Add(focusVisualSetter);
             st.Setters.Add(marginSetter);

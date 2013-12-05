@@ -1110,6 +1110,17 @@ namespace TheAirline.Model.GeneralModel.Helpers
             
             if (largestDestination != null)
                 summary += string.Format("The largest destination in terms of demand from [LI airport={0}] where you don't have a route, is [LI airport={1}]", homeAirport.Profile.IATACode, largestDestination.Profile.IATACode);
+
+            summary += "\n[HEAD=Fleet Summary]\n";
+
+            int fleetSize = GameObject.GetInstance().HumanAirline.DeliveredFleet.Count;
+            int inorderFleetSize = GameObject.GetInstance().HumanAirline.Fleet.Count - fleetSize;
+
+            int airlinersWithoutRoute = GameObject.GetInstance().HumanAirline.DeliveredFleet.Count(f => !f.HasRoute);
+
+            summary += string.Format("[WIDTH=300 Fleet Size:]{0}\n", fleetSize);
+            summary += string.Format("[WIDTH=300 Airliners in Order:]{0}\n", inorderFleetSize);
+            summary += string.Format("[WIDTH=300 Airliners Without Routes:]{0}\n", airlinersWithoutRoute);
             
             GameObject.GetInstance().NewsBox.addNews(new News(News.NewsType.Airline_News, GameObject.GetInstance().GameTime,string.Format("{0} {1} Summary",monthName,GameObject.GetInstance().GameTime.AddMonths(-1).Year),summary));// Translator.GetInstance().GetString("News", "1003"), string.Format(Translator.GetInstance().GetString("News", "1003", "message"), airliner.Airliner.TailNumber, airport.Profile.IATACode)));
                         
@@ -1684,6 +1695,20 @@ namespace TheAirline.Model.GeneralModel.Helpers
         //creates a new game
         public static void CreateGame(StartDataObject startData)
         {
+            if (startData.RealData)
+            {
+                var notRealAirlines = Airlines.GetAirlines(a=>!a.Profile.IsReal && a != startData.Airline);
+                var notRealManufacturers = Manufacturers.GetManufacturers(m=>!m.IsReal);
+                var notRealAirliners = AirlinerTypes.GetTypes(a => notRealManufacturers.Contains(a.Manufacturer));
+
+                foreach (Airline notRealAirliner in notRealAirlines)
+                    Airlines.RemoveAirline(notRealAirliner);
+
+                foreach (AirlinerType airliner in notRealAirliners)
+                    AirlinerTypes.RemoveType(airliner);
+                
+            }
+
             int startYear = startData.Year;
             int opponents = startData.NumberOfOpponents;
             Airline airline = startData.Airline;

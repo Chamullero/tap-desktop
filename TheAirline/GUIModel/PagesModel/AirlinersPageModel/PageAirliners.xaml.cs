@@ -74,6 +74,9 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
             if (selection == "Order" && frmContent != null)
                 frmContent.Navigate(new PageManufacturers() { Tag = this });
 
+            if (selection == "New" && frmContent != null)
+                frmContent.Navigate(new PageNewAirliners() { Tag = this });
+
 
         }
     }

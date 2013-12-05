@@ -3262,7 +3262,7 @@ Good luck.</value>
     <value>Used Airliners</value>
   </data>
   <data name="PageAirliners_2001_name" xml:space="preserve">
-    <value>Order New Airliners</value>
+    <value>Order From Manufacturer</value>
   </data>
   <data name="PageUsedAirliner_200_name" xml:space="preserve">
     <value>Buy Airliner</value>
@@ -4535,5 +4535,14 @@ Good luck.</value>
   </data>
   <data name="PageHumanRoutes_1006_name" xml:space="preserve">
     <value>Average</value>
+  </data>
+  <data name="PageNewGame_1029_name" xml:space="preserve">
+    <value>Use Only Real Data</value>
+  </data>
+  <data name="PageAirliners_2002_name" xml:space="preserve">
+    <value>Order New Airliner</value>
+  </data>
+  <data name="PageNewAirliners_200_name" xml:space="preserve">
+    <value>Order Airliner(s)</value>
   </data>
 </root>

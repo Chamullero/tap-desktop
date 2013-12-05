@@ -167,6 +167,7 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
             if (GameObject.GetInstance().HumanAirline.Contract != null)
             {
                 Boolean sameManufaturer = this.SelectedAirliners.FirstOrDefault(a => a.Type.Manufacturer != GameObject.GetInstance().HumanAirline.Contract.Manufacturer) == null;
+                
                 if (sameManufaturer)
                     contractedOrder = true;
                 else
@@ -186,9 +187,12 @@ namespace TheAirline.GUIModel.PagesModel.AirlinersPageModel
             }
 
 
-            if (totalPrice > GameObject.GetInstance().HumanAirline.Money)
-                WPFMessageBox.Show(Translator.GetInstance().GetString("MessageBox", "2006"), Translator.GetInstance().GetString("MessageBox", "2006", "message"), WPFMessageBoxButtons.Ok);
-            else
+           if (totalPrice > GameObject.GetInstance().HumanAirline.Money)
+                        {
+                            WPFMessageBox.Show(Translator.GetInstance().GetString("MessageBox", "2001"), Translator.GetInstance().GetString("MessageBox", "2001", "message"), WPFMessageBoxButtons.Ok);
+                        }
+                        else
+                        
             {
                 if (tryOrder)
                 {

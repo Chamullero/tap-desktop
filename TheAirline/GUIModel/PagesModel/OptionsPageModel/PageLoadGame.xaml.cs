@@ -66,6 +66,7 @@ namespace TheAirline.GUIModel.PagesModel.OptionsPageModel
             }
 
             string file = (string)lbSaves.SelectedItem;
+
             WPFMessageBoxResult result = WPFMessageBox.Show(Translator.GetInstance().GetString("MessageBox", "1002"), Translator.GetInstance().GetString("MessageBox", "1002", "message"), WPFMessageBoxButtons.YesNo);
 
             if (result == WPFMessageBoxResult.Yes)
@@ -73,6 +74,7 @@ namespace TheAirline.GUIModel.PagesModel.OptionsPageModel
              
                 if (file != null)
                 {
+                   
                     SplashControl scLoading = UIHelpers.FindChild<SplashControl>(this, "scLoading");
 
                     scLoading.Visibility = System.Windows.Visibility.Visible;
