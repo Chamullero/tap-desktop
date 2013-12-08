@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using TheAirline.Model.AirlineModel;
 using TheAirline.Model.AirlinerModel;
 using TheAirline.Model.AirportModel;
 using TheAirline.Model.GeneralModel;
@@ -38,6 +39,37 @@ namespace TheAirline.GUIModel.HelpersModel
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    //the converter for an airline to brush
+    public class AirlineBrushConverter : IValueConverter
+    {
+
+        public object Convert(object value)
+        {
+            return Convert(value, null, null, null);
+        }
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            Airline airline = (Airline)value;
+
+            try
+            {
+                TypeConverter colorConverter = new ColorConverter();
+                Color c = (Color)colorConverter.ConvertFromString(airline.Profile.Color);
+
+                return new SolidColorBrush(c);
+            }
+            catch
+            {
+
+                return Brushes.White;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -213,7 +245,10 @@ namespace TheAirline.GUIModel.HelpersModel
             {
                 string[] values = parameter.ToString().Split(' ');
 
-                return Translator.GetInstance().GetString(values[0], values[1]);
+                if (values.Length == 1)
+                    return Translator.GetInstance().GetString(values[0], "1000");
+                else
+                    return Translator.GetInstance().GetString(values[0], values[1]);
             }
             catch (Exception)
             {

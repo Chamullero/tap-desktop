@@ -1021,7 +1021,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
             else if (claim.Damage < policy.Deductible)
             {
                 policy.Deductible -= claim.Damage;
-                GraphicsModel.PageModel.GeneralModel.Warnings.AddWarning("Low Damage", "The damage incurred was less than your deductible, so you will not receive an insurance payout for this claim! \n Reference: " + claim.Index);
+                //Warnings.AddWarning("Low Damage", "The damage incurred was less than your deductible, so you will not receive an insurance payout for this claim! \n Reference: " + claim.Index);
             }
         }
     }

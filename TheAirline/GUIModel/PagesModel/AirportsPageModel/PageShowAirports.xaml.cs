@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TheAirline.GraphicsModel.PageModel.GeneralModel;
 using TheAirline.GraphicsModel.UserControlModel.MessageBoxModel;
 using TheAirline.GraphicsModel.UserControlModel.PopUpWindowsModel;
 using TheAirline.GUIModel.HelpersModel;
@@ -36,6 +35,7 @@ namespace TheAirline.GUIModel.PagesModel.AirportsPageModel
         public List<AirportMVVM> AllAirports { get; set; }
         public List<Airline> AllAirlines { get; set; }
         public List<AirlinerType> HumanAircrafts { get; set; }
+        public ObservableCollection<AirportMVVM> SelectedAirports { get; set; }
         public PageShowAirports(List<Airport> airports)
         {
             createPage(airports);
@@ -48,6 +48,7 @@ namespace TheAirline.GUIModel.PagesModel.AirportsPageModel
         private void createPage(List<Airport> airports)
         {
             this.AllAirlines = new List<Airline>();
+            this.SelectedAirports = new ObservableCollection<AirportMVVM>();
 
             Airline dummyAirline = new Airline(new AirlineProfile("All Airlines", "99", "Blue", "", false, 1900, 1900), Airline.AirlineMentality.Safe, Airline.AirlineFocus.Domestic, Airline.AirlineLicense.Domestic, Route.RouteType.Passenger);
             dummyAirline.Profile.addLogo(new AirlineLogo(AppSettings.getDataPath() + "\\graphics\\airlinelogos\\default.png"));
@@ -182,6 +183,25 @@ namespace TheAirline.GUIModel.PagesModel.AirportsPageModel
                     return a != null && a.Airport.getMaxRunwayLength()>=type.MinRunwaylength || type.Manufacturer.Name == "Dummy" ;
                 };
             }
+        }
+
+        private void cbSelected_Checked(object sender, RoutedEventArgs e)
+        {
+            AirportMVVM airport = (AirportMVVM)((CheckBox)sender).Tag;
+
+            this.SelectedAirports.Add(airport);
+        }
+
+        private void cbSelected_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AirportMVVM airport = (AirportMVVM)((CheckBox)sender).Tag;
+
+            this.SelectedAirports.Remove(airport);
+        }
+
+        private void btnCompare_Click(object sender, RoutedEventArgs e)
+        {
+           
         }
         
     }

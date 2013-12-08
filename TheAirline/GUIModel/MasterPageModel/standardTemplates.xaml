@@ -65,8 +65,19 @@
         <WrapPanel>
             <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom"></TextBlock>
             <TextBlock Text="{Binding State.ShortName,TargetNullValue={x:Static sys:String.Empty},StringFormat='{}, {0}'}" VerticalAlignment="Bottom"></TextBlock>
+            <Image Source="{Binding State.Flag}" Margin="5 0 0 0" Height="20" Width="20" RenderOptions.BitmapScalingMode="HighQuality">
+                <Image.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="{x:Null}">
+                                <Setter Property="Image.Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image> 
             <ContentControl Content="{Binding Country,Converter={StaticResource CountryCurrentCountryConverter}}" VerticalAlignment="Bottom">
-                <ContentControl.ContentTemplate>
+                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <DockPanel>
 

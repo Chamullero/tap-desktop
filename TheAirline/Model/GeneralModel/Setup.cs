@@ -13,7 +13,6 @@ using TheAirline.Model.AirlineModel;
 using TheAirline.Model.AirlinerModel;
 using TheAirline.Model.AirlinerModel.RouteModel;
 using TheAirline.Model.GeneralModel.StatisticsModel;
-using TheAirline.GraphicsModel.SkinsModel;
 using TheAirline.Model.GeneralModel.Helpers;
 using TheAirline.Model.PassengerModel;
 using TheAirline.Model.GeneralModel.CountryModel;
@@ -26,7 +25,6 @@ using System.Threading.Tasks;
 using TheAirline.Model.PilotModel;
 using System.Globalization;
 using TheAirline.Model.GeneralModel.ScenarioModel;
-using TheAirline.GraphicsModel.Converters;
 
 namespace TheAirline.Model.GeneralModel
 {
@@ -98,9 +96,7 @@ namespace TheAirline.Model.GeneralModel
 
 				LoadScenarios();
 			  
-
-				Skins.Init();
-			}
+		}
 			catch (Exception e)
 			{
 				
@@ -171,7 +167,6 @@ namespace TheAirline.Model.GeneralModel
 			States.Clear();
 			Unions.Clear();
 			AirlinerTypes.Clear();
-			Skins.Clear();
 			FeeTypes.Clear();
 			Alliances.Clear();
 			FlightRestrictions.Clear();

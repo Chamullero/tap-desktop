@@ -237,7 +237,7 @@
                             </Style>
                         </StackPanel.Style>
                         <TextBlock Text="{Binding Source={x:Null}, Converter={StaticResource TranslatorConverter},ConverterParameter='PageAirlineInfo 1028'}" VerticalAlignment="Bottom" Style="{StaticResource SmallHeaderStyle}"></TextBlock>
-                        <ListBox BorderThickness="0" ItemContainerStyleSelector="{StaticResource ListBoxItemStyleSelector}" ItemsSource="{Binding AirlineAirlines}">
+                        <ListBox BorderThickness="0" Background="Transparent"  ItemContainerStyleSelector="{StaticResource ListBoxItemStyleSelector}" ItemsSource="{Binding AirlineAirlines}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <WrapPanel>

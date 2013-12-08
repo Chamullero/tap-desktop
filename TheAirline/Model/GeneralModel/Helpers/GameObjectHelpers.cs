@@ -9,7 +9,6 @@ using TheAirline.Model.AirlineModel;
 using TheAirline.Model.AirportModel;
 using TheAirline.Model.GeneralModel.StatisticsModel;
 using TheAirline.Model.PassengerModel;
-using TheAirline.GraphicsModel.Converters;
 using TheAirline.GraphicsModel.UserControlModel.PopUpWindowsModel;
 using TheAirline.GraphicsModel.UserControlModel.MessageBoxModel;
 using TheAirline.Model.GeneralModel.HolidaysModel;
@@ -21,11 +20,12 @@ using TheAirline.Model.PilotModel;
 using TheAirline.Model.StatisticsModel;
 using TheAirline.Model.AirlineModel.SubsidiaryModel;
 using System.Diagnostics;
-using TheAirline.GraphicsModel.PageModel.GeneralModel;
 using TheAirline.GUIModel.ObjectsModel;
 using TheAirline.Model.GeneralModel.CountryModel;
 using TheAirline.GUIModel.PagesModel.GamePageModel;
 using System.Globalization;
+using TheAirline.GUIModel.HelpersModel;
+using TheAirline.GUIModel.CustomControlsModel.PopUpWindowsModel;
 
 namespace TheAirline.Model.GeneralModel.Helpers
 {
@@ -196,7 +196,7 @@ namespace TheAirline.Model.GeneralModel.Helpers
                             if (airliner.Airliner.Airline.IsHuman)
                             {
 
-                                airliner.Homebase = (Airport)PopUpNewAirlinerHomeBase.ShowPopUp(airliner);
+                                airliner.Homebase = (Airport)PopUpNewAirlinerHomebase.ShowPopUp(airliner);
 
 
                             }
