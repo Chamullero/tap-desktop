@@ -21,6 +21,7 @@ namespace TheAirline.GUIModel.HelpersModel
     //the converter for a string to a brush
     public class StringToBrushConverter : IValueConverter
     {
+        //KLM major airlines
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
