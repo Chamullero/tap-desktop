@@ -68,7 +68,9 @@ namespace TheAirline.Model.AirportModel
             DateTime deliveryDate = GameObject.GetInstance().GameTime.AddDays(gates * 10);
             for (int i = 0; i < gates; i++)
             {
-                Gate gate = new Gate(deliveryDate,this.Airline);
+                Gate gate = new Gate(deliveryDate);
+                gate.Airline = this.Airline;
+
                 this.Gates.addGate(gate);
             }
         }

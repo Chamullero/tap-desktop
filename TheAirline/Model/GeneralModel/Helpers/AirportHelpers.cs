@@ -567,7 +567,12 @@ namespace TheAirline.Model.GeneralModel.Helpers
                     {
 
                         for (int i = 0; i < numberOfGates; i++)
-                            minTerminal.Gates.addGate(new Gate(GameObject.GetInstance().GameTime.AddDays(daysToBuild),minTerminal.Airline));
+                        {
+                            Gate gate = new Gate(GameObject.GetInstance().GameTime.AddDays(daysToBuild));
+                            gate.Airline = minTerminal.Airline;
+
+                            minTerminal.Gates.addGate(gate);
+                        }
 
                         airport.Income -= price;
                         airport.LastExpansionDate = GameObject.GetInstance().GameTime;

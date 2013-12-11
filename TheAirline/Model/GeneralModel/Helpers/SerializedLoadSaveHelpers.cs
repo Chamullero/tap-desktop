@@ -137,8 +137,10 @@ namespace TheAirline.Model.GeneralModel.Helpers
             using (FileStream stream = new FileStream(fileName, FileMode.Open))
             {
                 using (DeflateStream decompress = new DeflateStream(stream, CompressionMode.Decompress))
-                {
-                    deserializedSaveObject = (SaveObject)serializer.ReadObject(decompress);
+                {j
+
+                    object o = serializer.ReadObject(decompress);
+   
                 }
             }
 
