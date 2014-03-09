@@ -845,6 +845,27 @@ namespace TheAirline.Model.GeneralModel.Helpers
 
 
         }
+
+        public static bool tryGetRunwaySlot (Airport Airp, long MinLength, TimeOfWeek Time)
+        {
+            bool Succesful = false;
+            
+            Airp.Runways.Sort(); //making sure that the smallest possible runway is used
+            
+            foreach (Runway rw in Airp.Runways )
+            {
+                if(MinLength >= rw.Length)
+                {
+                    if(rw.RunwaySlots.tryBlockSlot(Time))
+                    {
+                        Succesful = true;
+                        break;
+                    }
+                }
+            }
+
+            return Succesful;
+        }
     }
 
 }

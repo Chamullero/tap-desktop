@@ -11,7 +11,7 @@ namespace TheAirline.Model.AirportModel
 {
     //the class for a runway at an airport
     [Serializable]
-    public class Runway : ISerializable
+    public class Runway : ISerializable, IComparable
     {
         [Versioning("name")]
         public string Name { get; set; }
@@ -25,6 +25,9 @@ namespace TheAirline.Model.AirportModel
         public DateTime BuiltDate { get; set; }
         [Versioning("standard")]
         public Boolean Standard { get; set; }
+        public Slots RunwaySlots = new Slots(10, 6);
+
+
         public Runway(string name, long length, SurfaceType surface, DateTime builtDate, Boolean standard)
         {
             this.Name = name;
@@ -102,6 +105,11 @@ namespace TheAirline.Model.AirportModel
             }
 
 
+        }
+
+        public int CompareTo(Runway Rw)
+        {
+            return this.Length.CompareTo(Rw.Length);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace TheAirline.Model.GeneralModel
             _TimeZone = LocalTimeZone;
         }
 
-        public void addTimeSpan (TimeSpan AddTime)
+        private void addTimeSpanToObj (TimeSpan AddTime)
         {
             this._Hour += AddTime.Hours;
 
@@ -49,6 +49,16 @@ namespace TheAirline.Model.GeneralModel
  
         }
         // Adds a given TimeSpan to the TimeofWeek
+
+        public TimeOfWeek addTimeSpan(TimeSpan AddTime)
+        { 
+            TimeOfWeek ReturnTime;
+            ReturnTime = this;
+            ReturnTime.addTimeSpanToObj(AddTime);
+
+            return ReturnTime;
+        }          
+            
 
         public void subtractTimeSpan (TimeSpan SubstractTime)
         {
