@@ -14,7 +14,7 @@ namespace TheAirline.Model.AirportModel
         private int[][] FreeSlots = new int [6][];
         private int SlotInterval;
         private int SlotsInInterval;
-        private int _FreeSlotCount; //Instead iof doing a froeach query the number of free slots is saved in the obj for performance
+        private int _FreeSlotCount; //Instead of doing a foreach query the number of free slots is saved in the obj for performance
 
         public int FreeSlotCount { get{return _FreeSlotCount; }}
         
@@ -69,7 +69,7 @@ namespace TheAirline.Model.AirportModel
             }
             else { return false; }            
         }
-        // Trys to block a slot at a specific time returns true if blocking was succesful, false if there were no free slots 
+        // Trys to block a slot at a specific time returns true if blocking was successful, false if there were no free slots 
 
         public void releaseSlot(TimeOfWeek ReleaseTime)
         {
